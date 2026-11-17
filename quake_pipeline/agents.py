@@ -2,7 +2,10 @@
 except produce text that the code then validates or cleans."""
 
 from google.adk import Agent
+from google.adk.models import Gemini
+from google.genai import types
 
+from . import config
 from .config import GEMINI_MODEL
 from .schemas import PipelineRequest, SummaryInput
 
@@ -29,19 +32,34 @@ If total_events is 0, say that no events matched the request.
 """
 
 
-def build_plan_agent(model=GEMINI_MODEL) -> Agent:
+def build_model(name: str = GEMINI_MODEL) -> Gemini:
+    """The Gemini model with a time limit per call and a cap on retries."""
+    return Gemini(
+        model=name,
+        retry_options=types.HttpRetryOptions(
+            attempts=config.MODEL_MAX_ATTEMPTS, initial_delay=2.0, max_delay=10.0
+        ),
+        client_kwargs={
+            "http_options": types.HttpOptions(
+                timeout=config.MODEL_TIMEOUT_SECONDS * 1000  # milliseconds
+            )
+        },
+    )
+
+
+def build_plan_agent(model=None) -> Agent:
     return Agent(
         name="plan_agent",
-        model=model,
+        model=model or build_model(),
         instruction=PLAN_INSTRUCTION,
         output_schema=PipelineRequest,
     )
 
 
-def build_summary_agent(model=GEMINI_MODEL) -> Agent:
+def build_summary_agent(model=None) -> Agent:
     return Agent(
         name="summary_agent",
-        model=model,
+        model=model or build_model(),
         instruction=SUMMARY_INSTRUCTION,
         input_schema=SummaryInput,
         output_key="summary_text",

@@ -56,8 +56,9 @@ there is evidence to inspect.
 
 - Honor the `Retry-After` header on a 429, so the wait matches what the
   source asks for.
-- Retry the AI calls on transient errors, and fall back to a second model
-  if the first is unavailable. Today the summary has a safe non-AI fallback,
+- Fall back to a second model automatically if the first is unavailable.
+  AI calls already have a time limit and limited retries, but when Gemini
+  reported high demand during testing, switching models was a manual step. Today the summary has a safe non-AI fallback,
   but the planning step does not.
 - Move failed runs to a "needs attention" list with the reason, so they can
   be replayed from the saved raw file instead of re-fetched.
@@ -150,7 +151,7 @@ more sensitive data were involved.
 
 ## Testing
 
-**Today.** 302 automated tests with 97% coverage, including the full graph
+**Today.** 303 automated tests with 97% coverage, including the full graph
 with a stub model, the real storage client against a local stand-in for the
 storage API, and the security rules themselves written as tests.
 

@@ -68,6 +68,11 @@ MAX_DOWNLOAD_SECONDS = 30  # whole download, so a slow drip cannot hang a run
 MAX_RESPONSE_BYTES = 20 * 1024 * 1024
 USER_AGENT = "quake-pipeline/1.0 (class project; ADK data pipeline)"
 
+# AI model calls: a firm time limit and a retry cap, so an overloaded or
+# unreachable model ends the run with a clear error instead of hanging.
+MODEL_TIMEOUT_SECONDS = 60
+MODEL_MAX_ATTEMPTS = 3
+
 MAX_SUMMARY_CHARS = 600
 MAX_LABEL_CHARS = 80
 TOP_GROUPS = 15

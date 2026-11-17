@@ -195,3 +195,13 @@ def test_importing_the_package_has_no_side_effects_and_needs_no_settings():
     )
     assert done.returncode == 0, done.stderr[-500:]
     assert done.stdout.strip() == "quake_pipeline"
+
+
+def test_model_calls_have_a_time_limit_and_a_retry_cap():
+    """Without these, an overloaded model makes the run hang with no error."""
+    for agent in (agents.plan_agent, agents.summary_agent):
+        model = agent.model
+        assert model.model == config.GEMINI_MODEL
+        assert model.retry_options.attempts == config.MODEL_MAX_ATTEMPTS == 3
+        assert model.client_kwargs["http_options"].timeout == 60_000
+    assert agents.plan_agent.model is not agents.summary_agent.model
