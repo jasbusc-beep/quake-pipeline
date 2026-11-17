@@ -237,7 +237,7 @@ The tests need no network, no cloud account and no model.
 | Viewer | Security headers on every response, traversal attempts, bad run ids, other HTTP methods, hostile Host headers, generic error bodies |
 | Security rules | No dangerous imports or calls, agents have no tools, graph order, pinned dependencies, no secrets in the repo, vendored library hash |
 
-Results on 2026-11-17 (Python 3.12): 296 tests passed, 97% coverage,
+Results on 2026-11-17 (Python 3.12): 302 tests passed, 97% coverage,
 `ruff` clean, `pip-audit` found no known vulnerabilities across all 89
 pinned packages, `bandit` found no issues. A fresh install from
 `requirements.lock` in a clean copy of the repo passes the same checks.
@@ -265,7 +265,7 @@ quake_pipeline/        the ADK agent package
   logs.py              structured logging
 viewer/                local web page (127.0.0.1 only)
 tools/demo.py          demo mode (no cloud, no model)
-tests/                 296 tests
+tests/                 302 tests
 FUTURE_IMPROVEMENTS.md what I would do next
 ```
 

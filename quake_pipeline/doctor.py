@@ -58,7 +58,7 @@ def check_google_login() -> tuple[bool, str]:
 def check_bucket_access() -> tuple[bool, str]:
     try:
         runs = storage.list_run_ids(limit=1)
-    except (GoogleAPIError, GoogleAuthError, RuntimeError) as err:
+    except (GoogleAPIError, GoogleAuthError, RuntimeError, OSError) as err:
         return False, (
             f"Could not read the bucket ({type(err).__name__}). Check the bucket "
             "exists and your account has the two roles from the README."

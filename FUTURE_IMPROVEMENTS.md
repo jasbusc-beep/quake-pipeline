@@ -150,7 +150,7 @@ more sensitive data were involved.
 
 ## Testing
 
-**Today.** 296 automated tests with 97% coverage, including the full graph
+**Today.** 302 automated tests with 97% coverage, including the full graph
 with a stub model, the real storage client against a local stand-in for the
 storage API, and the security rules themselves written as tests.
 

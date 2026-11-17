@@ -8,8 +8,10 @@ Every object name is built here from a fixed prefix and a run id that has
 been checked against a strict pattern. Callers cannot pass a free-form path.
 """
 
+import os
 import re
 
+import google.auth
 from google.api_core.exceptions import NotFound
 from google.cloud import storage as gcs
 
@@ -23,9 +25,26 @@ _client = None
 
 
 def _get_client():
+    """Build the storage client once, from Application Default Credentials.
+
+    The project is taken from the login itself. Letting the library guess
+    would make it shell out to the gcloud program, which may not be on the
+    path. Reading and writing objects only needs the bucket name anyway.
+    """
     global _client
     if _client is None:
-        _client = gcs.Client()
+        credentials, project = google.auth.default()
+        project = (
+            project
+            or getattr(credentials, "quota_project_id", None)
+            or os.environ.get("GOOGLE_CLOUD_PROJECT")
+        )
+        if not project:
+            raise RuntimeError(
+                "Could not tell which Google Cloud project to use. Add "
+                "GOOGLE_CLOUD_PROJECT=your-project-id to quake_pipeline/.env."
+            )
+        _client = gcs.Client(project=project, credentials=credentials)
     return _client
 
 

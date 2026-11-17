@@ -160,3 +160,48 @@ def test_env_file_loading(tmp_path, monkeypatch):
     monkeypatch.delenv("QP_TEST_A")
     monkeypatch.delenv("QP_TEST_B")
     config.load_env_file(tmp_path / "missing.env")  # a missing file is fine
+
+
+# --- building the real client ----------------------------------------------
+
+
+class _Creds:
+    def __init__(self, quota_project_id=None):
+        self.quota_project_id = quota_project_id
+
+
+@pytest.mark.parametrize(
+    "detected,quota,env,expected",
+    [
+        ("from-login", "from-quota", "from-env", "from-login"),
+        (None, "from-quota", "from-env", "from-quota"),
+        (None, None, "from-env", "from-env"),
+    ],
+)
+def test_client_project_comes_from_the_login_without_needing_gcloud(
+    monkeypatch, detected, quota, env, expected
+):
+    built = {}
+
+    def fake_client(project=None, credentials=None):
+        built.update(project=project, credentials=credentials)
+        return "client"
+
+    creds = _Creds(quota)
+    monkeypatch.setattr(storage, "_client", None)
+    monkeypatch.setattr(storage.google.auth, "default", lambda: (creds, detected))
+    monkeypatch.setattr(storage.gcs, "Client", fake_client)
+    monkeypatch.setenv("GOOGLE_CLOUD_PROJECT", env)
+
+    assert storage._get_client() == "client"
+    assert built == {"project": expected, "credentials": creds}
+    assert storage._get_client() == "client"  # built once, then reused
+    monkeypatch.setattr(storage, "_client", None)
+
+
+def test_client_without_any_project_gives_a_clear_instruction(monkeypatch):
+    monkeypatch.setattr(storage, "_client", None)
+    monkeypatch.setattr(storage.google.auth, "default", lambda: (_Creds(), None))
+    monkeypatch.delenv("GOOGLE_CLOUD_PROJECT", raising=False)
+    with pytest.raises(RuntimeError, match="GOOGLE_CLOUD_PROJECT"):
+        storage._get_client()

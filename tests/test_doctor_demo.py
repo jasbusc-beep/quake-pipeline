@@ -107,3 +107,15 @@ def test_demo_storage_is_create_only():
     with pytest.raises(Exception):
         blob.upload_from_string(b"two", if_generation_match=0)
     assert blob.download_as_bytes() == b"one"
+
+
+@pytest.mark.parametrize("error", [OSError("project not found"), RuntimeError("no project")])
+def test_doctor_survives_any_storage_setup_error(healthy, monkeypatch, capsys, error):
+    def broken(*args, **kwargs):
+        raise error
+
+    monkeypatch.setattr(storage, "list_run_ids", broken)
+    assert doctor.main() == 1
+    out = capsys.readouterr().out
+    assert "[FAIL] Bucket access" in out
+    assert "[PASS] USGS data source" in out  # it kept going to the last check
