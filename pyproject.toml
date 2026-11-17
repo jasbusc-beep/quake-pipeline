@@ -1,0 +1,33 @@
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+filterwarnings = ["ignore::UserWarning:google.adk", "ignore::DeprecationWarning:google"]
+
+[tool.coverage.run]
+source = ["quake_pipeline", "viewer", "tools"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 95
+exclude_also = ["if __name__ == .__main__.:"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = ["viewer/web/vendor"]
+
+[tool.ruff.lint]
+# E/W: style, F: real bugs (unused names, undefined names), I: import order,
+# B: common bug patterns, UP: outdated syntax, S: security (same family as bandit)
+select = ["E", "W", "F", "I", "B", "UP", "S"]
+
+[tool.ruff.lint.per-file-ignores]
+# Tests use assert, bind test servers, and include fake secrets on purpose.
+"tests/*" = ["S101", "S104", "S105", "S106", "B017", "E501"]
+# These two set up sys.path before importing the project.
+"tools/demo.py" = ["E402"]
+"viewer/serve.py" = ["E402"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["quake_pipeline", "serve", "conftest", "fake_gcs_server"]

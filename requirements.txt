@@ -1,0 +1,16 @@
+# Exact pins for everything this project installs directly.
+# Resolved on 2026-11-17 with Python 3.12.
+# requirements.lock pins the full tree (these plus everything they pull in).
+
+# Runtime
+google-adk==2.14.1
+google-cloud-storage==3.17.1
+httpx==0.28.1
+pandas==3.1.1
+
+# Tests and checks
+pytest==9.2.0
+pytest-cov==7.1.0
+ruff==0.17.5
+pip-audit==2.10.1
+bandit==1.9.4

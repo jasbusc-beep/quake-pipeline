@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Earthquake Pipeline Run Report</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="top">
+    <div>
+      <h1>Earthquake Pipeline</h1>
+      <p class="tagline">Run report: what was asked, what came back, and proof it can be trusted</p>
+    </div>
+    <label class="run-picker" for="run-select">
+      <span>Run</span>
+      <select id="run-select" disabled></select>
+    </label>
+  </header>
+  <main>
+    <p id="status" class="status" role="status">Loading the latest run...</p>
+    <div id="content"></div>
+  </main>
+  <script src="/vendor/chart.umd.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>
