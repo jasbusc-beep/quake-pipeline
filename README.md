@@ -17,7 +17,7 @@ bucket, and shows the result on a web page. Every run can then be
 Requires Python 3.11 or newer.
 
 ```bash
-git clone <this-repo-url> && cd quake-pipeline
+git clone https://github.com/jasbusc-beep/quake-pipeline.git && cd quake-pipeline
 make install          # if "python3" is older than 3.11: make install PYTHON=python3.12
 make demo             # then open http://127.0.0.1:8080
 ```
